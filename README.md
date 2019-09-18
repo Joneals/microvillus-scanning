@@ -1,3 +1,3 @@
 <html>
-<h1> Microvillus Project <h1>
+<head> Microvillus Project <head>
 <html>
