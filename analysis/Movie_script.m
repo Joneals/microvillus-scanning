@@ -1,20 +1,20 @@
 % Use trajectory 25 for VSV8 0_1 case and trajectory 22 for VSV8 0_3 case
 
 Traj_no = 22;
-
+time_vec = linspace(0,60,600);
+t = 0:.01:2*pi;
 figure(1); hold on; set(gcf,'Color','w'); 
 set(gca,'LineWidth',2.5,'FontSize',75,'NextPlot','ReplaceChildren');
 F( size(time_vec,2) ) = struct('cdata',[],'colormap',[]);
-
-if( Traj_no == 25 )                         % Generate 10% VSV8 case movie
-    C_catch     = C_catch_VSV8_0_1_T25;     % Retrieve catch bond data
-    C_E1        = C_E1_VSV8_0_1_T25;        % Retrieve slip pMHC data
-    C_slip      = C_Slip_VSV8_0_1_T25;      % Retrieve slip bond data
-    C_TCR       = C_TCR_VSV8_0_1_T25;       % Retrieve T cell receptor data
-    C_VSV8      = C_VSV8_0_1_T25;           % Retrieve VSV8 pMHC data
-    MV_center   = MV_center_VSV8_0_1_T25;   % Retrieve microvillus center data
-    
-    for n = 1:size(time_vec,2)              % Iterate through all recorded time points
+pause
+if( 1 == 1 )                         % Probably remove
+    C_catch     = C_Catch;     % Retrieve catch bond data
+    C_E1        = C_E1;        % Retrieve slip pMHC data
+    C_slip      = C_Slip;      % Retrieve slip bond data
+    C_TCR       = C_TCR;       % Retrieve T cell receptor data
+    C_VSV8      = C_Ag           % Retrieve VSV8 pMHC data
+    MV_center   = MV_center_VSV8_0_10_T;   % Retrieve microvillus center data
+    for n = 1:size(time_vec,2)             % Iterate through all recorded time points
         
         hold on; box on;
         time_str    = time_vec(1,n);        % Retrieve time point
@@ -65,22 +65,6 @@ if( Traj_no == 25 )                         % Generate 10% VSV8 case movie
                 m8  = plot( [C_slip(4,1,n) C_slip(4,3,n)], ...
                     [C_slip(4,2,n) C_slip(4,4,n)],'g','LineWidth',7 );
             end
-            if( C_slip(5,5,n) ~= 0 )
-                m9  = plot( [C_slip(5,1,n) C_slip(5,3,n)], ...
-                    [C_slip(5,2,n) C_slip(5,4,n)],'g','LineWidth',7 );
-            end
-            if( C_slip(6,5,n) ~= 0 )
-                m10 = plot( [C_slip(1,1,n) C_slip(1,3,n)], ...
-                    [C_slip(1,2,n) C_slip(1,4,n)],'g','LineWidth',7 );
-            end
-            if( C_slip(7,5,n) ~= 0 )
-                m11 = plot( [C_slip(2,1,n) C_slip(2,3,n)], ...
-                    [C_slip(2,2,n) C_slip(2,4,n)],'g','LineWidth',7 );
-            end
-            if( C_slip(8,5,n) ~= 0 )
-                m12 = plot( [C_slip(3,1,n) C_slip(3,3,n)], ...
-                    [C_slip(3,2,n) C_slip(3,4,n)],'g','LineWidth',7 );
-            end
         end
         
         % Plot the catch bonds present within the axes of interest
@@ -91,14 +75,6 @@ if( Traj_no == 25 )                         % Generate 10% VSV8 case movie
             if( C_catch(1,5,n) ~= 0 )
                 m13  = plot( [C_catch(1,1,n) C_catch(1,3,n)], ...
                     [C_catch(1,2,n) C_catch(1,4,n)],'b','LineWidth',7 );
-            end
-            if( C_catch(2,5,n) ~= 0 )
-                m14  = plot( [C_catch(2,1,n) C_catch(2,3,n)], ...
-                    [C_catch(2,2,n) C_catch(2,4,n)],'b','LineWidth',7 );
-            end
-            if( C_catch(3,5,n) ~= 0 )
-                m15  = plot( [C_catch(3,1,n) C_catch(3,3,n)], ...
-                    [C_catch(3,2,n) C_catch(3,4,n)],'b','LineWidth',7 );
             end
         end
         
