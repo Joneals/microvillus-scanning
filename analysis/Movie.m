@@ -7,37 +7,30 @@
 % C_E1      - Vector of E1 positions
 % C_Ag      - Vector of Ag positions
 % C_Slip    - Vector of active slip bonds
+% C_Catch   - Vector of active catch bonds
 
+% Set the dimensions of the figure
 movie_resolution = [1280 640];
-sampleRate = .1; % Eventually change simulation to export this
+sampleRate = .1; % change simulation to save this
 
+close all
 window = figure('Name', 'Movie', 'Position', [0 0 movie_resolution(1) movie_resolution(2)]);
 hold on
 set(gca,'NextPlot','ReplaceChildren');
 movegui(window,'center');
 
-sample_time = 0:sampleRate:tf;
+sample_time = 0:sampleRate:tf-sampleRate;
 pause(1)
 
 theta_vec = linspace(0, 2*pi, 180);
-for i = 1:length(sample_time)-1
+for i = 1:length(sample_time)
     
     
     % Plot the microvillus boundary circle
-    plot(MV_center(i) + Rad_mv*cos(theta_vec), Rad_mv*sin(theta_vec), 'b')
-    
+    plot(MV_center(i) + Rad_mv*cos(theta_vec), Rad_mv*sin(theta_vec), 'k', 'LineWidth', 1);
     hold on % Turn on hold after first plot so old elements are removed
     
     title("Time: " + num2str(sample_time(i)));
-    
-    % Plot TCR circles
-    plot(C_TCR(:,1,i), C_TCR(:,2,i), 'go', 'MarkerSize', 12, 'MarkerFaceColor', 'g')
-    
-    % Plot E1 pMHCs
-    plot(C_E1(:, 1, i), C_E1(:, 2, i), 'gx', 'MarkerSize', 12, 'MarkerEdgeColor', 'k')
-    
-    % Plot AG pMHCs
-    plot(C_Ag(:, 1, i), C_Ag(:, 2, i), 'rx')
     
     % Plot bond connections
     for iSlip = 1:size(C_Slip,1)
@@ -45,10 +38,27 @@ for i = 1:length(sample_time)-1
              [C_Slip(iSlip, 2, i) C_Slip(iSlip, 4, i)],...
          'r-', 'LineWidth', 2);
     end
+    for iCatch = 1:size(C_Catch,1)
+       plot([C_Catch(iCatch,1,i) C_Catch(iCatch, 3, i)],...
+             [C_Catch(iCatch, 2, i) C_Catch(iCatch, 4, i)],...
+         'r-', 'LineWidth', 2);
+    end
+    
+    % Plot TCR circles
+    plot(C_TCR(:,1,i), C_TCR(:,2,i), 'bo', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b')
+    
+    % Plot E1 pMHCs
+    plot(C_E1(:, 1, i), C_E1(:, 2, i), 'go', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g')
+    
+    % Plot AG pMHCs
+    plot(C_Ag(:, 1, i), C_Ag(:, 2, i), 'ro', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'r')
+    
+    
  
     
     % Update axis limits
     axis([MV_center(i) - 4*Rad_mv, MV_center(i) + 4*Rad_mv, -2*Rad_mv 2*Rad_mv])
     drawnow
+    %F(i) = getframe(window);
     hold off
 end
