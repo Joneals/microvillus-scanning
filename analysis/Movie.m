@@ -11,6 +11,7 @@
 
 % Set the dimensions of the figure
 movie_resolution = [1280 640];
+movie_file = 'movie'
 sampleRate = .1; % change simulation to save this
 
 close all
@@ -20,6 +21,8 @@ set(gca,'NextPlot','ReplaceChildren');
 movegui(window,'center');
 
 sample_time = 0:sampleRate:tf-sampleRate;
+v = VideoWriter(movie_file);
+open(v)
 pause(1)
 
 theta_vec = linspace(0, 2*pi, 180);
@@ -59,6 +62,7 @@ for i = 1:length(sample_time)
     % Update axis limits
     axis([MV_center(i) - 4*Rad_mv, MV_center(i) + 4*Rad_mv, -2*Rad_mv 2*Rad_mv])
     drawnow
-    %F(i) = getframe(window);
+    writeVideo(v, getframe(window)); % Comment this out to disable saving
     hold off
 end
+close(v);
