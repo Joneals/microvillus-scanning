@@ -10,9 +10,22 @@
 % C_Catch   - Vector of active catch bonds
 
 % Set the dimensions of the figure
-movie_resolution = [1280 640];
+movie_resolution = [640 480];
+movie_mode = 1; % 0 - Follow MV; 1 - Zoomed out view
+sim_aspect = L_max / (4.*Rad_mv);
+
+if movie_mode == 1
+    movie_resolution = [1400 floor(1400./sim_aspect)];
+    marker_size = 2; 
+else
+    marker_size = 12;
+end
+
+
 movie_file = 'movie'
 sampleRate = .1; % change simulation to save this
+
+
 
 close all
 window = figure('Name', 'Movie', 'Position', [0 0 movie_resolution(1) movie_resolution(2)]);
@@ -22,9 +35,12 @@ movegui(window,'center');
 
 sample_time = 0:sampleRate:tf-sampleRate;
 v = VideoWriter(movie_file);
+v.FrameRate = 20;
 open(v)
-pause(1)
-
+%pause(1)
+if movie_mode == 1
+axes('Position', [0 0 1 1]);
+end
 theta_vec = linspace(0, 2*pi, 180);
 for i = 1:length(sample_time)
     
@@ -33,7 +49,17 @@ for i = 1:length(sample_time)
     plot(MV_center(i) + Rad_mv*cos(theta_vec), Rad_mv*sin(theta_vec), 'k', 'LineWidth', 1);
     hold on % Turn on hold after first plot so old elements are removed
     
-    title("Time: " + num2str(sample_time(i)));
+    title("Time: " + num2str(sample_time(i), '%.1f'));  
+    
+    % Plot TCR circles
+    plot(C_TCR(:,1,i), C_TCR(:,2,i), 'bo', 'MarkerSize', marker_size, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b')
+    
+    % Plot E1 pMHCs
+    plot(C_E1(:, 1, i), C_E1(:, 2, i), 'go', 'MarkerSize', marker_size, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g')
+    
+    % Plot AG pMHCs
+    plot(C_Ag(:, 1, i), C_Ag(:, 2, i), 'ro', 'MarkerSize', marker_size, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'r')
+    
     
     % Plot bond connections
     for iSlip = 1:size(C_Slip,1)
@@ -47,20 +73,14 @@ for i = 1:length(sample_time)
          'r-', 'LineWidth', 2);
     end
     
-    % Plot TCR circles
-    plot(C_TCR(:,1,i), C_TCR(:,2,i), 'bo', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b')
-    
-    % Plot E1 pMHCs
-    plot(C_E1(:, 1, i), C_E1(:, 2, i), 'go', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g')
-    
-    % Plot AG pMHCs
-    plot(C_Ag(:, 1, i), C_Ag(:, 2, i), 'ro', 'MarkerSize', 12, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'r')
-    
-    
- 
-    
     % Update axis limits
-    axis([MV_center(i) - 4*Rad_mv, MV_center(i) + 4*Rad_mv, -2*Rad_mv 2*Rad_mv])
+    if movie_mode == 0
+    axis([-2*Rad_mv*movie_resolution(1)./movie_resolution(2) + MV_center(i), 2*Rad_mv*movie_resolution(1)./movie_resolution(2) + MV_center(i), -2*Rad_mv 2*Rad_mv])
+    else
+    axis([0, L_max, -2*Rad_mv 2*Rad_mv])
+    text(MV_center(i) + 1.5*Rad_mv, 0, "Time: " + num2str(sample_time(i), '%.1f'));
+    end
+    
     drawnow
     writeVideo(v, getframe(window)); % Comment this out to disable saving
     hold off
