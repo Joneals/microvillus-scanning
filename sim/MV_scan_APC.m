@@ -1,17 +1,24 @@
 % MV_scan_APC.m
-
-for iii = 1:20                                 % Number of trajectories that will be ran (set to 25)
-    
+function MV_scan_APC(iteration)
+iii = iteration               % Number of trajectories that will be ran (set to 25)
+%iii = 1;    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
 %-------------------------------------------------------------------------%
 
-seeds = load('seeds.mat');                      % Opens file with randomly generated numbers
-rng(seeds.seeds(iii+75));                       % Mersenne Twister starts from random seed
+
+seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 
 %-------------------------------------------------------------------------%
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
+
+% New parameters
+grid_spacing = 25;
+if (iii >=50)
+	grid_spacing = 75;
+end
+%
 
 jjj         = 0.00;                             % Fraction of agonist pMHC molecules
 Ag_case     = 1;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
@@ -19,23 +26,23 @@ Vel_case    = 1;                                % State which velocity case (Lin
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [�m/min]
 CF          = 1000/60;                          % Conversion factor         [�m/min] -> [nm/s]
-tf          = 60.0;                             % Final time point of the simulation    [s]
+tf          = 20.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 0.10;                             % Rate at which matrices are sampled    [s]
-VFsampleRate= 2.5e-4;                           % Sample rate of forces and velocity    [s]
+VFsampleRate=  2.5e-4;                       % Sample rate of forces and velocity    [s]
 dx          = 0.10;                             % Spatial discretization                [nm]
 Rad_mv      = 50.0;                             % Radius of microvillus                 [nm]
 x_mv        = -Rad_mv:dx:Rad_mv;                % Microvillus tip on the APC            [nm]
 Rad_par     = 5.00;                             % Particle radius                       [nm]
 Lx          = -Rad_mv:dx:(L_max+Rad_mv);        % Vector in x-direction for the box     [nm]
-Ly          = -100:dx:100;                      % Vector in y-direction for the box     [nm]
+Ly          = -50:dx:50;                        % Vector in y-direction for the box     [nm]
 z_bond      = 13.0;                             % TCR-pMHC complex natural length       [nm]
 Height      = 13.0;                             % Height diff. between the T cell & APC [nm]
 x_MV0       = 0.0;                              % Initial microvillus displacement      [nm]
 Binding_rad = 2*z_bond;                         % Max distance a TCR-pMHC bond can form [nm]
 MV_thresh   = 50;                               % Set a microvillus threshold force     [pN]
 Box_area    = (L_max+2*Rad_mv)*(2*max(Ly));     % Total area of the domain              [nm^2]
-rho_pMHC    = 1*100;                            % Density of pMHC molecules on APC      [1/�m^2]
+rho_pMHC    = 5*100;                            % Density of pMHC molecules on APC      [1/�m^2]
 min_x       = min(Lx) + Rad_par;                % Min point in x-direction for particle [nm]
 max_x       = max(Lx) - Rad_par;                % Max point in x-direction for particle [nm]
 min_y       = min(Ly) + Rad_par;                % Min point in y-direction for particle [nm]
@@ -56,7 +63,7 @@ koff_E1_Strong = 0.302525;                      % Strong E1 slip bond unstressed
 koff_E1_f   = 5.533;                            % E1 slip bond characteristic force     [pN]
 koff_OVA_c0 = 4.241;                            % OVA catch phase unstressed off-rate   [1/s]
 koff_OVA_fc = 3.150;                            % OVA catch phase characteristic force  [pN]
-koff_OVA_s0 = 0.374*10^(iii-5);                            % OVA slip phase unstressed off-rate    [1/s]
+koff_OVA_s0 = 0.374;                            % OVA slip phase unstressed off-rate    [1/s]
 koff_OVA_fs = 9.280;                            % OVA slip phase characteristic force   [pN]
 kc_VSV8     = 40.0;                             % VSV8 catch phase unstressed off-rate  [1/s]
 fc_VSV8     = 2.286;                            % VSV8 catch phase characteristic force [pN]
@@ -86,7 +93,6 @@ CC_CatchBond= zeros(1,7);                       % Initialize catch bond tracking
 sampleCount = 0;                                % Counter used for tracking matrices
 VFSampleCT  = 0;                                % Counter used to track velocity and forces
 BondCounter = 1;                                % Counter used to record individual bonds
-rng('shuffle');                                 % Provide the random number generator seed
 
 Initial_conditions_and_propensity;              % Initialize all species and calculate aTot
 Velocity                = V0;                   % Record the initial microvillus velocity
@@ -136,25 +142,13 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
     Bond_distr(ii,4) = Bond_distr(ii,2) - Bond_distr(ii,1);
 end
 
-% Clear unnecessary variables from workspace
-clear Ag_neighbor aRand aTemp aTot BondCounter Box_area ...
-    CatchRowResize CB_row CC_Ag CC_Catch_Bond_int CC_CatchBond CC_E1 ...
-    CC_Slip_Bond_int CC_SlipBond CC_TCR CF Check counter Delta_xc_catch Delta_xc_slip ...
-    Diss_no Dist_Ag Dist_Catch Dist_E1 Dist_Slip Dist_TCR E1_neighbor fc_VSV8 ...
-    flag Force_Catch Force_Slip fs_VSV8 ii jj kbind_catch kbind_slip kc_VSV8 ...
-    kdiss_catch kdiss_slip khop_Ag khop_E1 khop_TCR kk koff_E1_0 koff_E1_f ...
-    koff_E1_Strong koff_OVA_c0 koff_OVA_fc koff_OVA_fs koff_OVA_s0 kon_Ag kon_E1 ...
-    kon_std ks_VSV8 ll Lx Ly max_x max_y min_x min_y MV_Force PAg_diff ...
-    Pbind_catch Pbind_slip Pdiss_catch Pdiss_slip PE1_diff pMHC_number Pran ...
-    propAg_diff propCatch_bind propCatch_break propE1_diff propSlip_bind ...
-    propSlip_break propTCR_diff PTCR_diff sampleCount sampleRate SB_row ...
-    size_CB size_SB SlipRowResize TCR_effect TCR_neighbor TCR_number ...
-    theta time Velocity VFSampleCT VFsampleRate x_mv x_MV0 x_new x_trial ...
-    y_new y_trial z_bond;
-
 % Create a filename and save the workspace of the trajectory
-filename = ['E1_' num2str(1-jjj) '.mat'];
+filename = [ 'gridspace_25/gridspace_' num2str(iteration) '.mat'];
 save(filename);
 
-clear; clc;                                     % Clear previous workspace before starting new trajectory
+%clear; clc;                                     % Clear previous workspace before starting new trajectory
+exit
 end
+
+
+
