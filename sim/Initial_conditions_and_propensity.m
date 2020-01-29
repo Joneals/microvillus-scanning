@@ -12,6 +12,7 @@ if( nE1 ~= 0 )                  % If E1 pMHCs are present, ...
     while( counter <= nE1 )     % Initialize E1 pMHCs on the APC surface
         
         % Generate trial x- and y-coordinates for an E1 pMHC molecule
+     
         x_trial = Lx( 1, randi( length(Lx) ) );
         y_trial = Ly( 1, randi( length(Ly) ) );
         
@@ -43,6 +44,15 @@ if( nE1 ~= 0 )                  % If E1 pMHCs are present, ...
         end
     end
 end       
+
+
+% Grid spacing
+x_points = Lx(1:(grid_spacing/dx):length(Lx));
+y_points = Ly(1:(grid_spacing/dx):length(Ly));
+[x_grid, y_grid] = meshgrid(x_points, y_points);
+CC_E1 = [x_grid(:) y_grid(:) (1:numel(x_grid))'];
+nE1 = length(CC_E1);
+%
 
 if( nAg ~= 0 )                  % If agonist pMHCs are present, ...
     counter = 1;                % Counter used to place agonist pMHC molecules
