@@ -42,7 +42,6 @@ end
 theta_vec = linspace(0, 2*pi, 180);
 for i = 1:length(sample_time)
     
-    
     % Plot the microvillus boundary circle
     plot(MV_center(i) + Rad_mv*cos(theta_vec), Rad_mv*sin(theta_vec), 'k', 'LineWidth', 1);
     hold on % Turn on hold after first plot so old elements are removed
