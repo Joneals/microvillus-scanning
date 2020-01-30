@@ -106,6 +106,7 @@ while( time < tf )                              % Run the simulation until t > t
     Catch_bond_formation;                       % Consider catch bond formation events
     Slip_bond_dissociation;                     % Consider slip bond dissociation events
     Catch_bond_dissociation;                    % Consider catch bond dissociation events
+    Drag_pMHCs;
     
     % Consider diffusive motion for all chemical species within the system
 %   E1_pMHC_diffusion;                          % Consider diffusive motion for all E1 pMHC
@@ -143,11 +144,11 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
 end
 
 % Create a filename and save the workspace of the trajectory
-filename = [ 'gridspace_25/gridspace_' num2str(iteration) '.mat'];
+filename = [ 'drag_' num2str(iteration) '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory
-exit
+%exit
 end
 
 
