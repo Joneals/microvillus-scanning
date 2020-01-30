@@ -53,6 +53,8 @@ y_points = Ly(1:(grid_spacing/dx):length(Ly));
 CC_E1 = [x_grid(:) y_grid(:) (1:numel(x_grid))'];
 nE1 = length(CC_E1);
 %
+E1_Velocity = zeros(length(CC_E1),2);
+
 
 if( nAg ~= 0 )                  % If agonist pMHCs are present, ...
     counter = 1;                % Counter used to place agonist pMHC molecules
