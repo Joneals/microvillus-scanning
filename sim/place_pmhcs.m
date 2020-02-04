@@ -15,14 +15,14 @@ nAg = npMHCs - nE1;
 
 CC_E1 = [];
 for i = 1:nE1
-    r = randi(length(pMHCs));
+    r = randi(size(pMHCs,1));
     CC_E1 = [CC_E1; pMHCs(r,:), i];
     pMHCs(r,:) = [];
 end
 
 CC_Ag = [];
 for i = 1:nAg
-    r = randi(size(pMHCs,1))
+    r = randi(size(pMHCs,1));
     disp(length(pMHCs))
     CC_Ag = [CC_Ag; pMHCs(r,:), i];
     pMHCs(r,:) = [];
