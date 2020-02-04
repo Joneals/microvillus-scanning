@@ -13,14 +13,8 @@ seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
-% New parameters
-grid_spacing = 25;
-if (iii >=50)
-	grid_spacing = 75;
-end
-%
 
-jjj         = 0.00;                             % Fraction of agonist pMHC molecules
+jjj         = 0.50;                             % Fraction of agonist pMHC molecules
 Ag_case     = 1;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
@@ -28,14 +22,14 @@ V0          = 5.20;                             % Initial microvillus velocity  
 CF          = 1000/60;                          % Conversion factor         [�m/min] -> [nm/s]
 tf          = 20.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
-sampleRate  = 0.10;                             % Rate at which matrices are sampled    [s]
+sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  2.5e-4;                       % Sample rate of forces and velocity    [s]
 dx          = 0.10;                             % Spatial discretization                [nm]
 Rad_mv      = 50.0;                             % Radius of microvillus                 [nm]
 x_mv        = -Rad_mv:dx:Rad_mv;                % Microvillus tip on the APC            [nm]
 Rad_par     = 5.00;                             % Particle radius                       [nm]
 Lx          = -Rad_mv:dx:(L_max+Rad_mv);        % Vector in x-direction for the box     [nm]
-Ly          = -50:dx:50;                        % Vector in y-direction for the box     [nm]
+Ly          = -100:dx:100;                        % Vector in y-direction for the box     [nm]
 z_bond      = 13.0;                             % TCR-pMHC complex natural length       [nm]
 Height      = 13.0;                             % Height diff. between the T cell & APC [nm]
 x_MV0       = 0.0;                              % Initial microvillus displacement      [nm]
