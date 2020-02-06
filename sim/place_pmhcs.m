@@ -1,7 +1,6 @@
 
 clear CC_E1 CC_Ag nE1 nAg
 
-density = 50;
 
 % Grid placement
 xGrid = min(Lx):density:max(Lx); % min_x, max_x defined in main file
@@ -23,7 +22,6 @@ end
 CC_Ag = [];
 for i = 1:nAg
     r = randi(size(pMHCs,1));
-    disp(length(pMHCs))
     CC_Ag = [CC_Ag; pMHCs(r,:), i];
     pMHCs(r,:) = [];
 end

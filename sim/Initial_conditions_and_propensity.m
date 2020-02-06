@@ -8,7 +8,6 @@ CC_TCR  = zeros( nTCR, 3 );     % Matrix that tracks centers of TCRs
 
 
 % Place pMHCs on a grid
-density = 75;
 place_pmhcs;
 
 % if( nE1 ~= 0 )                  % If E1 pMHCs are present, ...

@@ -1,11 +1,10 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
-iii = iteration               % Number of trajectories that will be ran (set to 25)
-%iii = 1;    
+iii = iteration + 1;       
+   
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
 %-------------------------------------------------------------------------%
-
 
 seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 
@@ -13,9 +12,10 @@ seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
+density = 75;
 
-jjj         = 0.50;                             % Fraction of agonist pMHC molecules
-Ag_case     = 1;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
+jjj         = .3;                             % Fraction of agonist pMHC molecules
+Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [�m/min]
@@ -23,13 +23,13 @@ CF          = 1000/60;                          % Conversion factor         [�
 tf          = 20.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
-VFsampleRate=  2.5e-4;                       % Sample rate of forces and velocity    [s]
+VFsampleRate=  2.5e-4;                          % Sample rate of forces and velocity    [s]
 dx          = 0.10;                             % Spatial discretization                [nm]
 Rad_mv      = 50.0;                             % Radius of microvillus                 [nm]
 x_mv        = -Rad_mv:dx:Rad_mv;                % Microvillus tip on the APC            [nm]
 Rad_par     = 5.00;                             % Particle radius                       [nm]
 Lx          = -Rad_mv:dx:(L_max+Rad_mv);        % Vector in x-direction for the box     [nm]
-Ly          = -100:dx:100;                        % Vector in y-direction for the box     [nm]
+Ly          = -100:dx:100;                      % Vector in y-direction for the box     [nm]
 z_bond      = 13.0;                             % TCR-pMHC complex natural length       [nm]
 Height      = 13.0;                             % Height diff. between the T cell & APC [nm]
 x_MV0       = 0.0;                              % Initial microvillus displacement      [nm]
@@ -138,11 +138,11 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
 end
 
 % Create a filename and save the workspace of the trajectory
-filename = [ 'drag_' num2str(iteration) '.mat'];
+filename = [ 'output/' num2str(iii) '_ag_' num2str(jjj, '%.1f') '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory
-%exit
+exit
 end
 
 
