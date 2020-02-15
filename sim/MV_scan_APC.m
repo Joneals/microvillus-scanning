@@ -1,6 +1,8 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
 iii = iteration + 1;       
+
+dragEnable = mod(iii,2);
    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
@@ -12,15 +14,15 @@ seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
-density = 75;
+density = 50;
 
-jjj         = .3;                             % Fraction of agonist pMHC molecules
+jjj         = 0.6;                              % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
-V0          = 5.20;                             % Initial microvillus velocity          [�m/min]
-CF          = 1000/60;                          % Conversion factor         [�m/min] -> [nm/s]
-tf          = 20.0;                             % Final time point of the simulation    [s]
+V0          = 5.20;                             % Initial microvillus velocity          [um/min]
+CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
+tf          = 30.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  2.5e-4;                          % Sample rate of forces and velocity    [s]
@@ -100,7 +102,9 @@ while( time < tf )                              % Run the simulation until t > t
     Catch_bond_formation;                       % Consider catch bond formation events
     Slip_bond_dissociation;                     % Consider slip bond dissociation events
     Catch_bond_dissociation;                    % Consider catch bond dissociation events
-    Drag_pMHCs;
+    if (dragEnable)
+        Drag_pMHCs;
+    end
     
     % Consider diffusive motion for all chemical species within the system
 %   E1_pMHC_diffusion;                          % Consider diffusive motion for all E1 pMHC
@@ -138,7 +142,12 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
 end
 
 % Create a filename and save the workspace of the trajectory
-filename = [ 'output/' num2str(iii) '_ag_' num2str(jjj, '%.1f') '.mat'];
+if dragEnable 
+    dragName = 'Drag' ;
+else
+    dragName = 'NoDrag';
+end;
+filename = [  'output/' num2str(iii) '_Ag_0.6_' dragName '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory
