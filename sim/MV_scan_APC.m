@@ -2,7 +2,7 @@
 function MV_scan_APC(iteration)
 iii = iteration + 1;       
 
-dragEnable = mod(iii,2);
+dragEnable = 1;
    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
@@ -16,13 +16,13 @@ seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 
 density = 50;
 
-jjj         = 0.6;                              % Fraction of agonist pMHC molecules
+jjj         = 0.3 * mod(iii,2);                              % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
-L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
+L_max       = 5.20*500;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [um/min]
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
-tf          = 30.0;                             % Final time point of the simulation    [s]
+tf          = 0.1;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  2.5e-4;                          % Sample rate of forces and velocity    [s]
@@ -147,11 +147,11 @@ if dragEnable
 else
     dragName = 'NoDrag';
 end;
-filename = [  'output/' num2str(iii) '_Ag_0.6_' dragName '.mat'];
+filename = ['output/' num2str(iii) '_drag' '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory
-exit
+%exit
 end
 
 

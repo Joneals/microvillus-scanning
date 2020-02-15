@@ -1,5 +1,5 @@
 k_spring = k_bond; % [pN/nm]
-u_drag = 2; % [pN/(um/min)]
+u_drag = 1 * 10 ^ ( 2 - mod(iii,5) ); % [pN/(um/min)]
 
 for iBond = 1:size(CC_SlipBond,1)
     E1_Velocity = zeros(length(CC_E1),2);
