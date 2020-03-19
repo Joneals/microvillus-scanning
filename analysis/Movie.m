@@ -12,7 +12,7 @@
 % Set the dimensions of the figure
 movie_resolution = [1280 720];
 movie_mode = 0; % 0 - Follow MV; 1 - Zoomed out view
-sim_aspect = L_max / (4.*Rad_mv);
+sim_aspect = L_max/2 / (4.*Rad_mv);
 
 if movie_mode == 1
     movie_resolution = [1920 floor(1920./sim_aspect)];
@@ -22,8 +22,8 @@ else
 end
 
 
-movie_file = 'grid_follow' % Change export filename
-sampleRate = .1; % In case sim doesn't save it
+movie_file = '0Ag_1drag' % Change export filename
+%sampleRate = .1; % In case sim doesn't save it
 
 close all
 window = figure('Name', 'Movie', 'Position', [0 0 movie_resolution(1) movie_resolution(2)]);
@@ -32,13 +32,13 @@ set(gca,'NextPlot','ReplaceChildren');
 movegui(window,'center');
 
 sample_time = 0:sampleRate:tf-sampleRate;
-%v = VideoWriter(movie_file);
-%v.FrameRate = 20; % 2x realtime
-%open(v)
+v = VideoWriter(movie_file);
+v.FrameRate = 50; % 2x realtime
+open(v)
 
-if movie_mode == 1
+%if movie_mode == 1
 axes('Position', [0 0 1 1]); % Set chart to take entire window
-end
+%end
 theta_vec = linspace(0, 2*pi, 180);
 for i = 1:length(sample_time)
     
@@ -55,8 +55,9 @@ for i = 1:length(sample_time)
     plot(C_E1(:, 1, i), C_E1(:, 2, i), 'go', 'MarkerSize', marker_size, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g')
     
     % Plot AG pMHCs
+    if length(C_Ag) > 0
     plot(C_Ag(:, 1, i), C_Ag(:, 2, i), 'ro', 'MarkerSize', marker_size, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'r')
-    
+    end
     
     % Plot bond connections
     for iSlip = 1:size(C_Slip,1)
@@ -74,12 +75,13 @@ for i = 1:length(sample_time)
     if movie_mode == 0 % Follow
     axis([-2*Rad_mv*movie_resolution(1)./movie_resolution(2) + MV_center(i), 2*Rad_mv*movie_resolution(1)./movie_resolution(2) + MV_center(i), -2*Rad_mv 2*Rad_mv])
     else % Zoomed out
-    axis([0, L_max, -2*Rad_mv 2*Rad_mv])
+    axis([0, L_max/2, -2*Rad_mv 2*Rad_mv])
     text(MV_center(i) + 1.5*Rad_mv, 0, "Time: " + num2str(sample_time(i), '%.1f'));
     end
     
     drawnow
-  %  writeVideo(v, getframe(window)); % Comment this out to disable saving
+    %pause
+    writeVideo(v, getframe(window)); % Comment this out to disable saving
     hold off
 end
 close(v);
