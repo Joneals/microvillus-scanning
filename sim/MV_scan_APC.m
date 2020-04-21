@@ -1,8 +1,10 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
-iii = iteration + 1;       
+iii = iteration;       
 
 dragEnable = 1;
+%load('parameters.mat')
+
    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
@@ -14,15 +16,20 @@ seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
-density = 50;
+u_drag = 10.^(mod(iteration,5)-2);
+if u_drag == 1
+	exit
+end
 
-jjj         = 0.3 * mod(iii,2);                              % Fraction of agonist pMHC molecules
+%density = 15 + 15 * mod(iii,5);
+
+jjj         = 0.3 * mod(iteration,2);                                % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
-L_max       = 5.20*500;                        % Length of the domain w/o microvillus  [nm]
+L_max       = 5.20*1000;                         % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [um/min]
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
-tf          = 0.1;                             % Final time point of the simulation    [s]
+tf          = 60.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  2.5e-4;                          % Sample rate of forces and velocity    [s]
@@ -38,7 +45,7 @@ x_MV0       = 0.0;                              % Initial microvillus displaceme
 Binding_rad = 2*z_bond;                         % Max distance a TCR-pMHC bond can form [nm]
 MV_thresh   = 50;                               % Set a microvillus threshold force     [pN]
 Box_area    = (L_max+2*Rad_mv)*(2*max(Ly));     % Total area of the domain              [nm^2]
-rho_pMHC    = 5*100;                            % Density of pMHC molecules on APC      [1/�m^2]
+rho_pMHC    = 400;                              % Density of pMHC molecules on APC      [1/�m^2]
 min_x       = min(Lx) + Rad_par;                % Min point in x-direction for particle [nm]
 max_x       = max(Lx) - Rad_par;                % Max point in x-direction for particle [nm]
 min_y       = min(Ly) + Rad_par;                % Min point in y-direction for particle [nm]
@@ -95,6 +102,13 @@ Velocity                = V0;                   % Record the initial microvillus
 SB_persist_forces       = zeros(2,2);           % Initialize slip bond force matrix
 CB_persist_forces       = zeros(2,2);           % Initialize catch bond force matrix
 
+% Modify parameter values
+% parameter_index = 1 + mod(iii, length(parameters));
+% 
+% u_drag = u_drag .* parameters(parameter_index,1);
+% koff_E1_0 = koff_E1_0 .* parameters(parameter_index,2);
+% koff_E1_f = koff_E1_f .* parameters(parameter_index,3);
+
 while( time < tf )                              % Run the simulation until t > tf
     
     % Consider binding / dissociation reactions within the sytem
@@ -142,12 +156,8 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
 end
 
 % Create a filename and save the workspace of the trajectory
-if dragEnable 
-    dragName = 'Drag' ;
-else
-    dragName = 'NoDrag';
-end;
-filename = ['output/' num2str(iii) '_drag' '.mat'];
+
+filename = ['output_' num2str(jjj) '/' num2str(iteration) '_' num2str(mod(iteration,5)-2) '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory

@@ -3,8 +3,8 @@ clear CC_E1 CC_Ag nE1 nAg
 
 
 % Grid placement
-xGrid = min(Lx):density:max(Lx); % min_x, max_x defined in main file
-yGrid = min(Ly):density:max(Ly); % Same as above
+xGrid = min(Lx):density:max(Lx); 
+yGrid = min(Ly):density:max(Ly); 
 [xGrid, yGrid] = meshgrid(xGrid, yGrid);
 pMHCs = [xGrid(:) yGrid(:)];
 npMHCs = length(pMHCs);
