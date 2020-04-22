@@ -44,7 +44,6 @@ if( nE1 ~= 0 )                  % If E1 pMHCs are present, ...
                 CC_E1(counter,2) = y_trial;     % Record y-coordinate
                 CC_E1(counter,3) = counter;     % Record the individual E1 pMHC number
                 counter = counter + 1;          % Update the counter
-                display (['Successfully placed ' num2str(counter)])
             end
         end
     end
