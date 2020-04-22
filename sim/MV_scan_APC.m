@@ -10,16 +10,14 @@ dragEnable = 1;
 % PROVIDE RNG SEED 
 %-------------------------------------------------------------------------%
 
-seed = rng('shuffle'); 			% Mersenne Twister starts from random seed
+rng('shuffle');			% Initialize the generator with a random seed
+seed = rng 			% Store the seed for reproducibility
 
 %-------------------------------------------------------------------------%
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
 u_drag = 10.^(mod(iteration,5)-2);
-if u_drag == 1
-	exit
-end
 
 %density = 15 + 15 * mod(iii,5);
 
@@ -31,7 +29,7 @@ V0          = 5.20;                             % Initial microvillus velocity  
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
 tf          = 60.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
-sampleRate  = 1/50;                             % Rate at which matrices are sampled    [s]
+sampleRate  = 1/30;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  2.5e-4;                          % Sample rate of forces and velocity    [s]
 dx          = 0.10;                             % Spatial discretization                [nm]
 Rad_mv      = 50.0;                             % Radius of microvillus                 [nm]
