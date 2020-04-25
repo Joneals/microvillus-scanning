@@ -3,7 +3,6 @@ function MV_scan_APC(iteration)
 iii = iteration;       
 
 dragEnable = 1;
-%load('parameters.mat')
 
    
 %-------------------------------------------------------------------------%
@@ -11,7 +10,7 @@ dragEnable = 1;
 %-------------------------------------------------------------------------%
 
 rng('shuffle');			% Initialize the generator with a random seed
-seed = rng 			% Store the seed for reproducibility
+seed = rng;             % Store the seed for reproducibility
 
 %-------------------------------------------------------------------------%
 % DEFINE PARAMETERS
@@ -19,12 +18,11 @@ seed = rng 			% Store the seed for reproducibility
 
 u_drag = 10.^(mod(iteration,5)-2);
 
-%density = 15 + 15 * mod(iii,5);
 
-jjj         = 0.3 * mod(iteration,2);                                % Fraction of agonist pMHC molecules
+jjj         = 0.3 * mod(iteration,2);           % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
-L_max       = 5.20*1000;                         % Length of the domain w/o microvillus  [nm]
+L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [um/min]
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
 tf          = 60.0;                             % Final time point of the simulation    [s]
@@ -155,7 +153,7 @@ end
 
 % Create a filename and save the workspace of the trajectory
 
-filename = ['output_' num2str(jjj) '/' num2str(iteration) '_' num2str(mod(iteration,5)-2) '.mat'];
+filename = ['output_' num2str(jjj) '/' num2str(iteration, '%03i') '_' num2str(mod(iteration,5)-2) '.mat'];
 save(filename);
 
 %clear; clc;                                     % Clear previous workspace before starting new trajectory
