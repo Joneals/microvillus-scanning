@@ -4,8 +4,12 @@ SB_row  = 2;                        % Row counter used for tracking slip bond fo
 CB_row  = 2;                        % Row counter used for tracking catch bond forces
 size_SB = size(CC_SlipBond,1);      % Determine the size of the slip bond matrix
 size_CB = size(CC_CatchBond,1);     % Determine the size of the catch bond matrix
+SB_persist_forces = zeros(2,2);		% 4/21/20 - Clear perisisting forces to fix bug below
+CB_persist_forces = zeros(2,2);		% This shouldn't have any side effects since the matrix is updated no matter what
 
 % If (1) there is a slip bond and (2) the bond has persisted >= 1 dt
+% BUG - These loops only clear forces up to the current number of active bonds
+% If the number of bonds decreases, the broken bond won't have its force removed
 for ii = 1:size_SB                  % Iterate through the slip bond matrix
     
     % Ensure there is a slip bond and retrieve the bond formation time
@@ -45,7 +49,7 @@ end
 if( ( sum( CC_SlipBond(:,7) ) == 0 )||( ...
     sum( Bond_distr( CC_SlipBond( find( CC_SlipBond(:,7) ), 7 ), 1 ) - time ) == 0 ) ) 
     SB_persist_forces(1,1)      = time;
-    SB_persist_forces(SB_row,1) = 0;
+    SB_persist_forces(SB_row,1) = 0; % BUG - This only clears row two of persisting forces
 end
 
 % If (1) there is a catch bond and (2) the bond has persisted >= 1 dt
@@ -87,7 +91,7 @@ end
 if( ( sum( CC_CatchBond(:,7) ) == 0 )||( ...
     sum( Bond_distr( CC_CatchBond( find( CC_CatchBond(:,7) ), 7), 1 ) - time ) == 0 ) )
     CB_persist_forces(1,1)      = time;
-    CB_persist_forces(CB_row,1) = 0;
+    CB_persist_forces(CB_row,1) = 0; % BUG
 end
 
 % Initialize entry for the slip and catch bond forces on the microvillus.
