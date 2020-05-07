@@ -1,5 +1,13 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
+
+%-------------------------------------------------------------------------%
+% OUTPUT OPTIONS
+%-------------------------------------------------------------------------%
+
+outputFolder = "output";
+outputBasename = "";
+saveInterval = 1.0;
    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
@@ -92,6 +100,18 @@ Velocity                = V0;                   % Record the initial microvillus
 SB_persist_forces       = zeros(2,2);           % Initialize slip bond force matrix
 CB_persist_forces       = zeros(2,2);           % Initialize catch bond force matrix
 
+filename = fullfile(outputFolder, num2str(iteration, '%03i') + outputBasename + '.mat');
+display(filename)
+
+if isfile(filename)
+	load(filename)
+	if time >= tf
+		exit
+	end
+end
+
+nextSave = saveInterval;
+
 while( time < tf )                              % Run the simulation until t > tf
     
     % Consider binding / dissociation reactions within the sytem
@@ -126,6 +146,10 @@ while( time < tf )                              % Run the simulation until t > t
     Update_propensity;                          % Update propensity after diffusions & reactions    
 
     time = time + dt;                           % Update the time of the simulation
+	if (time >= nextSave)
+		save(filename);
+		nextSave = time + saveInterval;
+	end
 end
 
 for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distribution matrix
@@ -138,8 +162,6 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
     Bond_distr(ii,4) = Bond_distr(ii,2) - Bond_distr(ii,1);
 end
 
-% Create a filename and save the workspace of the trajectory
-filename = ['output/' num2str(iteration, '%03i') '.mat'];
 save(filename);
 
 end
