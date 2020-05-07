@@ -5,9 +5,10 @@ CB_row  = 2;                        % Row counter used for tracking catch bond f
 size_SB = size(CC_SlipBond,1);      % Determine the size of the slip bond matrix
 size_CB = size(CC_CatchBond,1);     % Determine the size of the catch bond matrix
 SB_persist_forces = zeros(2,2);		% 4/21/20 - Clear perisisting forces to fix bug below
-CB_persist_forces = zeros(2,2);		% This shouldn't have any side effects since the matrix is updated no matter what
+CB_persist_forces = zeros(2,2);		% This shouldn't have any side effects since the matrix is updated regardless
 
 % If (1) there is a slip bond and (2) the bond has persisted >= 1 dt
+
 % BUG - These loops only clear forces up to the current number of active bonds
 % If the number of bonds decreases, the broken bond won't have its force removed
 for ii = 1:size_SB                  % Iterate through the slip bond matrix

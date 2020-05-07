@@ -1,25 +1,19 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
-iii = iteration;       
-
-dragEnable = 1;
-
    
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
 %-------------------------------------------------------------------------%
 
-rng('shuffle');			% Initialize the generator with a random seed
-seed = rng;             % Store the seed for reproducibility
+rng('shuffle');									% Initialize the generator with a random seed
+seed = rng;             						% Store the seed for reproducibility
 
 %-------------------------------------------------------------------------%
 % DEFINE PARAMETERS
 %-------------------------------------------------------------------------%
 
-u_drag = 10.^(mod(iteration,5)-2);
-
-
-jjj         = 0.3 * mod(iteration,2);           % Fraction of agonist pMHC molecules
+u_drag 		= 1;								% Drag coefficient for pMHCs			[pN-min/um]
+jjj         = 0.3;					            % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
@@ -41,7 +35,7 @@ x_MV0       = 0.0;                              % Initial microvillus displaceme
 Binding_rad = 2*z_bond;                         % Max distance a TCR-pMHC bond can form [nm]
 MV_thresh   = 50;                               % Set a microvillus threshold force     [pN]
 Box_area    = (L_max+2*Rad_mv)*(2*max(Ly));     % Total area of the domain              [nm^2]
-rho_pMHC    = 400;                              % Density of pMHC molecules on APC      [1/�m^2]
+rho_pMHC    = 400;                              % Density of pMHC molecules on APC      [1/um^2]
 min_x       = min(Lx) + Rad_par;                % Min point in x-direction for particle [nm]
 max_x       = max(Lx) - Rad_par;                % Max point in x-direction for particle [nm]
 min_y       = min(Ly) + Rad_par;                % Min point in y-direction for particle [nm]
@@ -98,13 +92,6 @@ Velocity                = V0;                   % Record the initial microvillus
 SB_persist_forces       = zeros(2,2);           % Initialize slip bond force matrix
 CB_persist_forces       = zeros(2,2);           % Initialize catch bond force matrix
 
-% Modify parameter values
-% parameter_index = 1 + mod(iii, length(parameters));
-% 
-% u_drag = u_drag .* parameters(parameter_index,1);
-% koff_E1_0 = koff_E1_0 .* parameters(parameter_index,2);
-% koff_E1_f = koff_E1_f .* parameters(parameter_index,3);
-
 while( time < tf )                              % Run the simulation until t > tf
     
     % Consider binding / dissociation reactions within the sytem
@@ -112,9 +99,9 @@ while( time < tf )                              % Run the simulation until t > t
     Catch_bond_formation;                       % Consider catch bond formation events
     Slip_bond_dissociation;                     % Consider slip bond dissociation events
     Catch_bond_dissociation;                    % Consider catch bond dissociation events
-    if (dragEnable)
-        Drag_pMHCs;
-    end
+	
+	% Consider dragging of pMHCs along APC
+    Drag_pMHCs;
     
     % Consider diffusive motion for all chemical species within the system
 %   E1_pMHC_diffusion;                          % Consider diffusive motion for all E1 pMHC
@@ -152,13 +139,7 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
 end
 
 % Create a filename and save the workspace of the trajectory
-
-filename = ['output_' num2str(jjj) '/' num2str(iteration, '%03i') '_' num2str(mod(iteration,5)-2) '.mat'];
+filename = ['output/' num2str(iteration, '%03i') '.mat'];
 save(filename);
 
-%clear; clc;                                     % Clear previous workspace before starting new trajectory
-%exit
 end
-
-
-

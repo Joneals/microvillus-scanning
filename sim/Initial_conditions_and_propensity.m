@@ -49,10 +49,6 @@ if( nE1 ~= 0 )                  % If E1 pMHCs are present, ...
     end
 end       
 
-
-E1_Velocity = zeros(length(CC_E1),2);
-
-
 if( nAg ~= 0 )                  % If agonist pMHCs are present, ...
     counter = 1;                % Counter used to place agonist pMHC molecules
     

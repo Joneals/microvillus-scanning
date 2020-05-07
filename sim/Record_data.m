@@ -1,4 +1,4 @@
-% Record_data_no_bond_diffusion.m
+% Record_data.m
 
 % If a sample point is reached, record chemical species matrices and forces
 C_Ag(:,:,sampleCount)   = CC_Ag(:,:);       % Record the OVA / SSB / VSV8 pMHC positions
