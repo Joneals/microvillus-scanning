@@ -1,6 +1,8 @@
 % MV_scan_APC.m
 function MV_scan_APC(iteration)
 
+addpath('./sim');
+
 %-------------------------------------------------------------------------%
 % OUTPUT OPTIONS
 %-------------------------------------------------------------------------%
@@ -27,7 +29,7 @@ Vel_case    = 1;                                % State which velocity case (Lin
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [um/min]
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
-tf          = 60.0;                             % Final time point of the simulation    [s]
+tf          = 0.01;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/60;                             % Rate at which matrices are sampled    [s]
 VFsampleRate=  1e-3;							% Sample rate of forces and velocity    [s]
