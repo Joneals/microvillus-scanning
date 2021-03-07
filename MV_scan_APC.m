@@ -7,11 +7,9 @@ addpath('./sim');
 % OUTPUT OPTIONS
 %-------------------------------------------------------------------------%
 
-outputFolder = "output";
-outputBasename = "";
-saveInterval = 1.0;
+outputFolder = "output"; 						% Folder to save output data to
+saveInterval = 5.0;								% How often to save simulation data
    
-mkdir(outputFolder);
 %-------------------------------------------------------------------------%
 % PROVIDE RNG SEED 
 %-------------------------------------------------------------------------%
@@ -24,16 +22,16 @@ seed = rng;             						% Store the seed for reproducibility
 %-------------------------------------------------------------------------%
 
 u_drag 		= 1;								% Drag coefficient for pMHCs			[pN-min/um]
-jjj         = 0.3;					            % Fraction of agonist pMHC molecules
+jjj         = 0.0;					            % Fraction of agonist pMHC molecules
 Ag_case     = 3;                                % State agonist pMHC case (VSV8-1, OVA-2, strong slip-3)
 Vel_case    = 1;                                % State which velocity case (Linear - 1, Hill - 2)
 L_max       = 5.20*1000;                        % Length of the domain w/o microvillus  [nm]
 V0          = 5.20;                             % Initial microvillus velocity          [um/min]
 CF          = 1000/60;                          % Conversion factor         [um/min] -> [nm/s]
-tf          = 0.01;                             % Final time point of the simulation    [s]
+tf          = 60.0;                             % Final time point of the simulation    [s]
 time        = 0.0;                              % Starting point for the simulation     [s]
 sampleRate  = 1/60;                             % Rate at which matrices are sampled    [s]
-VFsampleRate=  1e-3;							% Sample rate of forces and velocity    [s]
+VFsampleRate= 1/100;							% Sample rate of forces and velocity    [s]
 dx          = 0.10;                             % Spatial discretization                [nm]
 Rad_mv      = 50.0;                             % Radius of microvillus                 [nm]
 x_mv        = -Rad_mv:dx:Rad_mv;                % Microvillus tip on the APC            [nm]
@@ -103,11 +101,15 @@ Velocity                = V0;                   % Record the initial microvillus
 SB_persist_forces       = zeros(2,2);           % Initialize slip bond force matrix
 CB_persist_forces       = zeros(2,2);           % Initialize catch bond force matrix
 
-filename = fullfile(outputFolder, num2str(iteration, '%03i') + outputBasename + '.mat');
+mkdir(outputFolder);
+filename = sprintf("%03i.mat", iteration);
+savefile = fullfile(outputFolder, filename);
+
 display(filename)
 
-if isfile(filename)
-	load(filename)
+% If data file exists, load it and continue
+if isfile(savefile)
+	load(savefile)
 	if time >= tf
 		exit
 	end
@@ -127,9 +129,9 @@ while( time < tf )                              % Run the simulation until t > t
     Drag_pMHCs;
     
     % Consider diffusive motion for all chemical species within the system
-%   E1_pMHC_diffusion;                          % Consider diffusive motion for all E1 pMHC
-%   Ag_pMHC_diffusion;                          % Consider diffusive motion for all agonist pMHC
-%   TCR_diffusion;                              % Consider diffusive motion for all TCRs
+	E1_pMHC_diffusion;                          % Consider diffusive motion for all E1 pMHC
+	Ag_pMHC_diffusion;                          % Consider diffusive motion for all agonist pMHC
+	TCR_diffusion;                              % Consider diffusive motion for all TCRs
     
     % Calculate forces bonds are experiencing if they've persisted >= 1 dt
     Persisting_forces_calculation;              % Calculate forces of bonds that have persisted
@@ -149,8 +151,10 @@ while( time < tf )                              % Run the simulation until t > t
     Update_propensity;                          % Update propensity after diffusions & reactions    
 
     time = time + dt;                           % Update the time of the simulation
+
+	% Save data so we can resume after cancellation/crash
 	if (time >= nextSave)
-		save(filename);
+		save(savefile);
 		nextSave = time + saveInterval;
 	end
 end
@@ -165,6 +169,6 @@ for ii = 1:size(Bond_distr,1)                   % Iterate through the bond distr
     Bond_distr(ii,4) = Bond_distr(ii,2) - Bond_distr(ii,1);
 end
 
-save(filename);
+save(savefile);
 
 end
